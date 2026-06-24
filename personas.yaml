@@ -1,7 +1,53 @@
 # ============================================================
 # personas.yaml
-# Manuell fil — frikopplad från systemstrukturen
-# Redigeras av teamet, inte av Claude
+# Manuell fil — redigeras av teamet eller Claude
+# ============================================================
+# STRUKTUR:
+#   roles    — synkroniseras med generated/roles.yaml.
+#              Claude håller listan uppdaterad; teamet fyller
+#              på med personas under varje roll (fri struktur).
+#   personas — fristående personas utan rollkoppling (fri struktur).
+#
+# SYNKREGEL:
+#   • Ny roll i domains/*.yaml → Claude lägger till den här.
+#   • Roll här som saknas i generated/roles.yaml → Claude
+#     lägger till den där med appears_in: [].
 # ============================================================
 
-personas: []
+# ------------------------------------------------------------
+# Roller — synkad med generated/roles.yaml
+# Lägg till personas under varje roll (fri struktur).
+# ------------------------------------------------------------
+roles:
+  - id: OSH
+    label: Områdesskyddshandläggare
+    personas:
+      # Exempel på hur du lägger till en persona:
+      # - name: Anna Svensson
+      #   org: Länsstyrelsen X
+      #   notes: Primär testanvändare, hanterar 30-40 uppdrag/år
+
+  - id: Fördelare
+    label: Fördelare
+    personas:
+
+  - id: Utförare
+    label: Utförare
+    personas:
+
+  - id: OA
+    label: Områdesansvarig
+    personas:
+
+  - id: AH
+    label: Avtalshandläggare
+    personas:
+
+  - id: alla
+    label: Alla roller
+    personas:
+
+# ------------------------------------------------------------
+# Fristående personas — fri struktur, redigeras av teamet
+# ------------------------------------------------------------
+personas:

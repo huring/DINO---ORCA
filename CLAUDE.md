@@ -103,10 +103,25 @@ Användaren specificerar ändringen direkt. Du skriver YAML och checkar in.
 
 ---
 
+## Synkregel: roles.yaml ↔ personas.yaml
+
+`generated/roles.yaml` och `personas.yaml` ska alltid vara i synk avseende vilka roller som finns. Tillämpa alltid båda stegen nedan när du regenererar roller:
+
+**1. Ny roll dyker upp i `domains/`** → lägg till den i **båda** filerna:
+- `generated/roles.yaml`: med `description` och `appears_in`
+- `personas.yaml`: under `roles`-sektionen med `personas:` (tom lista)
+
+**2. Roll finns i `personas.yaml` men saknas i `generated/roles.yaml`** → lägg till den i `generated/roles.yaml` med `appears_in: []` och en placeholder-beskrivning.
+
+`personas.yaml` är en manuell fil — ändra aldrig teamets befintliga persona-innehåll. Lägg bara till saknade roller längst ner i `roles`-sektionen.
+
+---
+
 ## Vad du aldrig ska göra
 
 - Ändra ett befintligt `id` — oavsett anledning.
-- Ta bort ett befintligt element ur `states`, `transitions`, `attributes` eller `status_independent_actions`.
-- Redigera `generated/roles.yaml` manuellt — den genereras alltid från `domains/`.
+- Ta bort ett befintligt element ur `states`, `transitions`, `attributes`, `status_independent_actions` eller `relations`.
+- Redigera `generated/roles.yaml` eller `generated/relations.yaml` manuellt — de genereras alltid från `domains/`.
 - Committa utan att användaren godkänt ändringen.
 - Skriva fritext i fält som ska vara strukturerade (villkor, roller).
+- Ändra eller ta bort befintligt persona-innehåll i `personas.yaml` — det tillhör teamet.
