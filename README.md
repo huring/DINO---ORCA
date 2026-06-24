@@ -28,7 +28,15 @@ orca-model/
 │   ├── uppdrag.yaml
 │   └── ...                           # Framtida domänobjekt
 ├── generated/
-│   └── roles.yaml                    # Genereras av Claude — redigeras ALDRIG manuellt
+│   ├── roles.yaml                    # Genereras av Claude — redigeras ALDRIG manuellt
+│   └── relations.yaml                # Genereras av Claude — redigeras ALDRIG manuellt
+├── skills/
+│   ├── orca-fraga.skill              # /orca-fråga — fråga om modellen (Claude Co-work)
+│   └── orca-andra.skill              # /orca-ändra — uppdatera modellen (Claude Co-work)
+├── .claude/
+│   └── commands/
+│       ├── orca-fråga.md             # /orca-fråga — Claude Desktop / Claude Code
+│       └── orca-ändra.md             # /orca-ändra — Claude Desktop / Claude Code
 └── .github/
     └── workflows/
         └── validate.yml
@@ -40,8 +48,27 @@ orca-model/
 
 | Fil | Objekt | Version | Status |
 |---|---|---|---|
-| `domains/uppdrag.yaml` | Uppdrag | 1.0.0 | ✅ Aktiv |
-| `domains/delomrade.yaml` | Delområde | 1.0.0 | ✅ Aktiv |
+| `domains/uppdrag.yaml` | Uppdrag | 1.0.2 | ✅ Aktiv |
+| `domains/delomrade.yaml` | Delområde | 1.0.2 | ✅ Aktiv |
+
+---
+
+## Kommandon
+
+Repot innehåller två kommandon som installeras automatiskt när du öppnar mappen i Claude.
+
+| Kommando | Syfte | Tillgänglig i |
+|---|---|---|
+| `/orca-fråga` | Ställ frågor om modellen | Claude Desktop, Claude Code, Claude Co-work |
+| `/orca-ändra` | Uppdatera modellen (föreslår → godkänner → committar) | Claude Desktop, Claude Code, Claude Co-work |
+
+**Exempel:**
+```
+/orca-fråga vilka actions kan en Fördelare utföra?
+/orca-ändra lägg till rollen Handläggare på Delområde
+```
+
+Fullständig dokumentation: [Kom igång med DINO ORCA-modellen](https://metria-nv.atlassian.net/wiki/x/CID8NQ)
 
 ---
 

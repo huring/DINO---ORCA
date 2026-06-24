@@ -28,7 +28,15 @@ Modellen används som gemensamt språk mellan verksamhet och teknik: vad ett upp
 ├── domains/
 │   └── uppdrag.yaml                   # Domänobjektfiler — en per objekt
 ├── generated/
-│   └── roles.yaml                     # Genereras av dig från domains/*.yaml — ALDRIG manuellt redigerad
+│   ├── roles.yaml                     # Genereras av dig från domains/*.yaml — ALDRIG manuellt redigerad
+│   └── relations.yaml                 # Genereras av dig från domains/*.yaml — ALDRIG manuellt redigerad
+├── skills/
+│   ├── orca-fraga.skill               # ZIP-arkiv med SKILL.md — för Claude Co-work
+│   └── orca-andra.skill               # ZIP-arkiv med SKILL.md — för Claude Co-work
+├── .claude/
+│   └── commands/
+│       ├── orca-fråga.md              # Slash-kommando /orca-fråga — Claude Desktop / Claude Code
+│       └── orca-ändra.md              # Slash-kommando /orca-ändra — Claude Desktop / Claude Code
 └── .github/
     └── workflows/
         └── validate.yml               # GitHub Action som validerar domains/*.yaml mot schemat
@@ -40,9 +48,12 @@ Modellen används som gemensamt språk mellan verksamhet och teknik: vad ett upp
 |---|---|---|
 | `domains/*.yaml` | Enbart Claude | Via konversation — aldrig direkt |
 | `generated/roles.yaml` | Enbart Claude | Regenereras automatiskt efter varje ändring i `domains/` |
+| `generated/relations.yaml` | Enbart Claude | Regenereras automatiskt efter varje ändring i `domains/` |
 | `schema/domain-object.schema.json` | Enbart Claude | Endast om schemat behöver utökas |
 | `personas.yaml` | Teamet manuellt | Frikopplad fil, inte en del av state machine-modellen |
 | `README.md` | Enbart Claude | Uppdateras när domänobjekttabellen ändras |
+| `skills/*.skill` | Enbart Claude | ZIP-arkiv för Claude Co-work — redigeras aldrig manuellt |
+| `.claude/commands/*.md` | Enbart Claude | Slash-kommandon för Claude Desktop/Code — redigeras aldrig manuellt |
 
 ---
 
