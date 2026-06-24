@@ -92,7 +92,9 @@ Användaren delar exportdata. Du jämför mot befintlig fil och lyfter fram avvi
 ### 3. Direkt i konversation
 Användaren specificerar ändringen direkt. Du skriver YAML och checkar in.
 
-**Flödet är alltid:** du föreslår → användaren godkänner → du checkar in. Committa aldrig utan godkännande.
+**Flödet är alltid:** du föreslår → användaren godkänner → du skriver filer → användaren committar och pushar.
+
+> **OBS om git-operationer:** Claude skriver filer men kör inte `git commit` eller `git push`. Sandboxmiljön saknar rättighet att städa upp git:s egna låsfiler, vilket leder till att `index.lock` fastnar och blockerar framtida operationer. Användaren ansvarar för alla git-kommandon — i terminalen eller GitHub Desktop.
 
 ---
 
