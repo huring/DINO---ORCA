@@ -30,10 +30,14 @@ roles:
   - id: Fördelare
     label: Fördelare
     personas:
+      - org: Konsultföretag
+        notes: Användare som inte utför uppdrag, utan endast fördelar dem. Jobbar ofta med många konsulter, oftast inom ett geografiskt avgränsat område.
 
   - id: Utförare
     label: Utförare
     personas:
+      - org: Konsultföretag
+        notes: Användare som utför uppdrag, ofta inom ett geografiskt avgränsat område. Jobbar med flera uppdrag samtidigt
 
   - id: OA
     label: Områdesansvarig
