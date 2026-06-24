@@ -1,0 +1,234 @@
+# ============================================================
+# ORCA-modell: Delområde
+# ============================================================
+# Källa: Git-repo (denna fil)
+# Skrivare: Claude (aldrig manuellt redigerad)
+# Version: 1.0.0
+# Senast uppdaterad: 2026-06-24
+# ============================================================
+
+object: delområde
+label: Delområde
+description: >
+  Ett delområde representerar ett geografiskt eller administrativt område
+  inom DINO. Det kopplas till ett fördelningsplan (FP) och följer en
+  livscykel från planering till avtalat avslut.
+
+version: "1.0.0"
+changelog:
+  - version: "1.0.0"
+    date: "2026-06-24"
+    description: Initialt schema genererat från CSV-export.
+
+# ------------------------------------------------------------
+# Attribut
+# Stabila id:n — lägg till nya, ändra aldrig befintliga id:n.
+# ------------------------------------------------------------
+attributes:
+  - id: delområde.attr.id
+    label: ID
+    type: string
+    description: Unikt identifierare för delområdet.
+    required: true
+
+  - id: delområde.attr.status
+    label: Status
+    type: enum
+    description: Delområdets aktuella status. Styrs av state machine nedan.
+    required: true
+
+  - id: delområde.attr.skapad_av
+    label: Skapad av
+    type: reference
+    ref_object: användare
+    description: OSH som skapade delområdet.
+    required: true
+
+  - id: delområde.attr.skapad_datum
+    label: Skapad datum
+    type: datetime
+    description: Tidpunkt då delområdet skapades.
+    required: true
+
+  - id: delområde.attr.fördelningsplan
+    label: Fördelningsplan (FP)
+    type: reference
+    ref_object: fördelningsplan
+    description: FP som delområdet är kopplat till. Villkor för beställa_uppdrag, hantera_väntans_avtal och avföra.
+    required: false
+
+  - id: delområde.attr.beloppstyp
+    label: Beloppstyp
+    type: enum
+    description: Typ av belopp. Villkor för lägg_till_ersättningspost.
+    required: false
+
+  - id: delområde.attr.pott
+    label: Pott
+    type: enum
+    description: Pott-kategori. Villkor för lägg_till_ersättningspost.
+    required: false
+
+  - id: delområde.attr.ersättningsposter
+    label: Ersättningsposter
+    type: list
+    description: Lista av ersättningsposter kopplade till delområdet.
+    required: false
+
+  - id: delområde.attr.avtal
+    label: Avtal
+    type: reference
+    ref_object: avtal
+    description: Avtal som registrerats på delområdet.
+    required: false
+
+# ------------------------------------------------------------
+# Statusar
+# Terminala statusar markeras med terminal: true.
+# ------------------------------------------------------------
+states:
+  - id: delområde.status.planerat
+    label: Planerat
+    terminal: false
+
+  - id: delområde.status.pågår
+    label: Pågår
+    terminal: false
+
+  - id: delområde.status.avtalat
+    label: Avtalat
+    terminal: true
+    description: Avtal är registrerat. Inga vidare actions möjliga.
+
+  - id: delområde.status.avförd
+    label: Avförd
+    terminal: false
+    description: Delområdet är avfört men kan återaktiveras via koppla_till_förslag eller lägg_till_fp.
+
+# ------------------------------------------------------------
+# Transitions
+# from: alltid en lista (även om bara ett värde).
+# roles: roller som får utföra actionen.
+# status_change: false för actions utan statusändring.
+# ------------------------------------------------------------
+transitions:
+  - id: delområde.action.skapa
+    label: Skapa
+    from: []           # Ingen befintlig status — skapar nytt objekt
+    to: delområde.status.planerat
+    roles:
+      - OSH
+    status_change: true
+    description: OSH skapar ett nytt delområde. Startar livscykeln.
+
+  - id: delområde.action.koppla_till_förslag
+    label: Koppla till ett förslag
+    from:
+      - delområde.status.planerat
+      - delområde.status.avförd
+    to: delområde.status.pågår
+    roles:
+      - OSH
+    status_change: true
+
+  - id: delområde.action.lägg_till_fp
+    label: Lägg till FP
+    from:
+      - delområde.status.planerat
+      - delområde.status.avförd
+    to: delområde.status.pågår
+    roles:
+      - OA
+    status_change: true
+
+  - id: delområde.action.beställa_uppdrag
+    label: Beställa uppdrag
+    from:
+      - delområde.status.pågår
+    to: ~              # Samma status — ingen förändring
+    roles:
+      - OSH
+    status_change: false
+    conditions:
+      - attribute: delområde.attr.fördelningsplan
+        value: true
+        description: Delområdet måste vara kopplat till ett FP.
+
+  - id: delområde.action.hantera_väntans_avtal
+    label: Hantera väntans avtal
+    from:
+      - delområde.status.pågår
+    to: ~              # Samma status — ingen förändring
+    roles:
+      - OSH
+    status_change: false
+    conditions:
+      - attribute: delområde.attr.fördelningsplan
+        value: true
+        description: Delområdet måste vara kopplat till ett FP.
+
+  - id: delområde.action.registrera_avtal
+    label: Registrera avtal
+    from:
+      - delområde.status.pågår
+    to: delområde.status.avtalat
+    roles:
+      - AH
+    status_change: true
+
+  - id: delområde.action.avföra
+    label: Avföra
+    from:
+      - delområde.status.pågår
+    to: delområde.status.avförd
+    roles:
+      - OSH
+    status_change: true
+    conditions:
+      - attribute: delområde.attr.fördelningsplan
+        value: true
+        description: Delområdet måste vara kopplat till ett FP.
+
+# ------------------------------------------------------------
+# Statusoberoende actions
+# Tillgängliga oavsett status. Ingen statusändring.
+# ------------------------------------------------------------
+status_independent_actions:
+  - id: delområde.action.lägg_till_ersättningspost
+    label: Lägg till ersättningspost
+    roles:
+      - OSH
+    status_change: false
+    conditions:
+      - attribute: delområde.attr.beloppstyp
+        value: budgeterat
+        description: Beloppstypen måste vara budgeterat.
+      - attribute: delområde.attr.pott
+        value:
+          - Länsram
+          - Förslag Nat Prio
+        description: Potten måste vara Länsram eller Förslag Nat Prio.
+
+  - id: delområde.action.uppdatera_ersättningspost
+    label: Uppdatera ersättningspost
+    roles:
+      - AH
+    status_change: false
+
+  - id: delområde.action.uppdatera_delområde
+    label: Uppdatera delområde
+    roles:
+      - OSH
+    status_change: false
+
+# ------------------------------------------------------------
+# Roller som förekommer i detta domänobjekt
+# Fullständig definition genereras i generated/roles.yaml
+# ------------------------------------------------------------
+roles:
+  - id: OSH
+    label: Områdesskyddshandläggare
+  - id: OA
+    label: Områdesansvarig
+  - id: AH
+    label: Avtalshandläggare

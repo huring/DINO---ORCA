@@ -130,7 +130,20 @@
             "items": { "type": "string" }
           },
           "status_change": { "type": "boolean", "enum": [false] },
-          "description": { "type": "string" }
+          "description": { "type": "string" },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["attribute", "value", "description"],
+              "additionalProperties": false,
+              "properties": {
+                "attribute": { "type": "string" },
+                "value": {},
+                "description": { "type": "string" }
+              }
+            }
+          }
         }
       }
     },

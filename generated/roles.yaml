@@ -7,9 +7,10 @@
 roles:
   - id: OSH
     label: Områdesskyddshandläggare
-    description: Skapar och beställer uppdrag, godkänner leveranser och avslutar uppdrag.
+    description: Skapar och beställer uppdrag, godkänner leveranser och avslutar uppdrag. Skapar och avför delområden.
     appears_in:
       - uppdrag
+      - delområde
 
   - id: Fördelare
     label: Fördelare
@@ -22,6 +23,18 @@ roles:
     description: Påbörjar, vilar och levererar uppdrag.
     appears_in:
       - uppdrag
+
+  - id: OA
+    label: Områdesansvarig
+    description: Lägger till FP på delområden.
+    appears_in:
+      - delområde
+
+  - id: AH
+    label: Avtalshandläggare
+    description: Registrerar avtal och uppdaterar ersättningsposter på delområden.
+    appears_in:
+      - delområde
 
   - id: alla
     label: Alla roller

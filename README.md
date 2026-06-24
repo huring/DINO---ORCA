@@ -41,6 +41,7 @@ orca-model/
 | Fil | Objekt | Version | Status |
 |---|---|---|---|
 | `domains/uppdrag.yaml` | Uppdrag | 1.0.0 | ✅ Aktiv |
+| `domains/delomrade.yaml` | Delområde | 1.0.0 | ✅ Aktiv |
 
 ---
 
