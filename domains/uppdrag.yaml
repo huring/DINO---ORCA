@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.0.0
+# Version: 1.0.1
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -13,11 +13,16 @@ description: >
   Ett uppdrag representerar en beställning av ett arbete inom DINO.
   Det skapas av OSH och följer en livscykel från beställning till avslut.
 
-version: "1.0.0"
+version: "1.0.1"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
     description: Initialt schema genererat från CSV-export och Miro ORCA-diagram.
+  - version: "1.0.1"
+    date: "2026-06-24"
+    description: >
+      Lagt till attribut delområde (referens till ursprungligt delområde).
+      Lagt till relations-sektion med relationer till delområde och användare.
 
 # ------------------------------------------------------------
 # Attribut
@@ -48,6 +53,13 @@ attributes:
     type: datetime
     description: Tidpunkt då uppdraget skapades.
     required: true
+
+  - id: uppdrag.attr.delområde
+    label: Delområde
+    type: reference
+    ref_object: delområde
+    description: Delområdet som uppdraget är beställt inom.
+    required: false
 
   - id: uppdrag.attr.tilldelad
     label: Tilldelad utförare
@@ -238,6 +250,34 @@ status_independent_actions:
       - alla
     status_change: false
     description: Alla roller kan koppla dokument till uppdraget oavsett status.
+
+# ------------------------------------------------------------
+# Relationer till andra domänobjekt
+# Stabila id:n — lägg till nya, ändra aldrig befintliga id:n.
+# via_attribute: relation uttryckt via ett lagrat attribut.
+# via_action: relation uttryckt via en action (processuell).
+# ------------------------------------------------------------
+relations:
+  - id: uppdrag.rel.tillhör_delområde
+    label: Tillhör delområde
+    target_object: delområde
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.delområde
+    description: Uppdraget är beställt inom ett delområde.
+
+  - id: uppdrag.rel.skapad_av_användare
+    label: Skapad av användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.skapad_av
+    description: OSH-användaren som skapade uppdraget.
+
+  - id: uppdrag.rel.tilldelad_användare
+    label: Tilldelad användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.tilldelad
+    description: Utföraren som uppdraget är tilldelat.
 
 # ------------------------------------------------------------
 # Roller som förekommer i detta domänobjekt

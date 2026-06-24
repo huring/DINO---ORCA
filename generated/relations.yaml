@@ -1,0 +1,94 @@
+# ============================================================
+# GENERERAD FIL — redigera ALDRIG manuellt
+# Genereras av Claude från domains/*.yaml
+# Senast genererad: 2026-06-24
+# ============================================================
+
+# ------------------------------------------------------------
+# Alla relationer (platt lista med from_object tillagt)
+# ------------------------------------------------------------
+relations:
+  - id: uppdrag.rel.tillhör_delområde
+    from_object: uppdrag
+    label: Tillhör delområde
+    target_object: delområde
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.delområde
+    description: Uppdraget är beställt inom ett delområde.
+
+  - id: uppdrag.rel.skapad_av_användare
+    from_object: uppdrag
+    label: Skapad av användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.skapad_av
+    description: OSH-användaren som skapade uppdraget.
+
+  - id: uppdrag.rel.tilldelad_användare
+    from_object: uppdrag
+    label: Tilldelad användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.tilldelad
+    description: Utföraren som uppdraget är tilldelat.
+
+  - id: delområde.rel.har_uppdrag
+    from_object: delområde
+    label: Har uppdrag
+    target_object: uppdrag
+    cardinality: one_to_many
+    via_action: delområde.action.beställa_uppdrag
+    description: Ett delområde kan ha ett eller flera uppdrag beställda från sig.
+
+  - id: delområde.rel.ingår_i_fördelningsplan
+    from_object: delområde
+    label: Ingår i fördelningsplan
+    target_object: fördelningsplan
+    cardinality: many_to_one
+    via_attribute: delområde.attr.fördelningsplan
+    description: Delområdet är kopplat till ett FP.
+
+  - id: delområde.rel.har_avtal
+    from_object: delområde
+    label: Har avtal
+    target_object: avtal
+    cardinality: one_to_one
+    via_attribute: delområde.attr.avtal
+    description: Avtal som registrerats på delområdet.
+
+  - id: delområde.rel.skapad_av_användare
+    from_object: delområde
+    label: Skapad av användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: delområde.attr.skapad_av
+    description: OSH-användaren som skapade delområdet.
+
+# ------------------------------------------------------------
+# Relationsgraf (adjacency list per objekt)
+# ------------------------------------------------------------
+graph:
+  uppdrag:
+    - target: delområde
+      cardinality: many_to_one
+      relation_id: uppdrag.rel.tillhör_delområde
+    - target: användare
+      cardinality: many_to_one
+      relation_id: uppdrag.rel.skapad_av_användare
+    - target: användare
+      cardinality: many_to_one
+      relation_id: uppdrag.rel.tilldelad_användare
+
+  delområde:
+    - target: uppdrag
+      cardinality: one_to_many
+      relation_id: delområde.rel.har_uppdrag
+    - target: fördelningsplan
+      cardinality: many_to_one
+      relation_id: delområde.rel.ingår_i_fördelningsplan
+    - target: avtal
+      cardinality: one_to_one
+      relation_id: delområde.rel.har_avtal
+    - target: användare
+      cardinality: many_to_one
+      relation_id: delområde.rel.skapad_av_användare

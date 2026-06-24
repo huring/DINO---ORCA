@@ -4,7 +4,7 @@
   "title": "ORCA Domain Object",
   "description": "Schema för ORCA-domänobjektfiler i DINO-modellen.",
   "type": "object",
-  "required": ["object", "label", "version", "changelog", "attributes", "states", "transitions", "status_independent_actions", "roles"],
+  "required": ["object", "label", "version", "changelog", "attributes", "states", "transitions", "status_independent_actions", "roles", "relations"],
   "additionalProperties": false,
   "properties": {
     "object": {
@@ -157,6 +157,27 @@
         "properties": {
           "id": { "type": "string" },
           "label": { "type": "string" }
+        }
+      }
+    },
+    "relations": {
+      "type": "array",
+      "description": "Relationer till andra domänobjekt. Addera nya — ändra aldrig befintliga id:n.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "target_object", "cardinality"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "target_object": { "type": "string" },
+          "cardinality": {
+            "type": "string",
+            "enum": ["one_to_one", "one_to_many", "many_to_one", "many_to_many"]
+          },
+          "via_attribute": { "type": "string" },
+          "via_action": { "type": "string" },
+          "description": { "type": "string" }
         }
       }
     }

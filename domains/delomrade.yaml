@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.0.0
+# Version: 1.0.1
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -14,11 +14,14 @@ description: >
   inom DINO. Det kopplas till ett fördelningsplan (FP) och följer en
   livscykel från planering till avtalat avslut.
 
-version: "1.0.0"
+version: "1.0.1"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
     description: Initialt schema genererat från CSV-export.
+  - version: "1.0.1"
+    date: "2026-06-24"
+    description: Lagt till relations-sektion med relationer till uppdrag, fördelningsplan, avtal och användare.
 
 # ------------------------------------------------------------
 # Attribut
@@ -220,6 +223,41 @@ status_independent_actions:
     roles:
       - OSH
     status_change: false
+
+# ------------------------------------------------------------
+# Relationer till andra domänobjekt
+# Stabila id:n — lägg till nya, ändra aldrig befintliga id:n.
+# via_attribute: relation uttryckt via ett lagrat attribut.
+# via_action: relation uttryckt via en action (processuell).
+# ------------------------------------------------------------
+relations:
+  - id: delområde.rel.har_uppdrag
+    label: Har uppdrag
+    target_object: uppdrag
+    cardinality: one_to_many
+    via_action: delområde.action.beställa_uppdrag
+    description: Ett delområde kan ha ett eller flera uppdrag beställda från sig.
+
+  - id: delområde.rel.ingår_i_fördelningsplan
+    label: Ingår i fördelningsplan
+    target_object: fördelningsplan
+    cardinality: many_to_one
+    via_attribute: delområde.attr.fördelningsplan
+    description: Delområdet är kopplat till ett FP.
+
+  - id: delområde.rel.har_avtal
+    label: Har avtal
+    target_object: avtal
+    cardinality: one_to_one
+    via_attribute: delområde.attr.avtal
+    description: Avtal som registrerats på delområdet.
+
+  - id: delområde.rel.skapad_av_användare
+    label: Skapad av användare
+    target_object: användare
+    cardinality: many_to_one
+    via_attribute: delområde.attr.skapad_av
+    description: OSH-användaren som skapade delområdet.
 
 # ------------------------------------------------------------
 # Roller som förekommer i detta domänobjekt
