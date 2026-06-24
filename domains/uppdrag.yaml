@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.0.2
+# Version: 1.1.0
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -11,9 +11,9 @@ object: uppdrag
 label: Uppdrag
 description: >
   Ett uppdrag representerar en beställning av ett arbete inom DINO.
-  Det skapas av OSH och följer en livscykel från beställning till avslut.
+  Det skapas av en beställare (vanligtvis OSH) och följer en livscykel från beställning till avslut.
 
-version: "1.0.2"
+version: "1.1.0"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
@@ -28,6 +28,12 @@ changelog:
     description: >
       Kompletterat relations-sektion med har_värderingar, har_kontaktperson
       och har_ersättningsbelopp, identifierade från systemets relationsmatris.
+  - version: "1.1.0"
+    date: "2026-06-24"
+    description: >
+      Lagt till roll Beställare som konceptuell abstraktion för den som
+      beställer uppdrag (vanligtvis OSH). Rollen adderad till skapa,
+      avsluta, beställa_tillägg och uppdatera_beställning.
 
 # ------------------------------------------------------------
 # Attribut
@@ -50,7 +56,7 @@ attributes:
     label: Skapad av
     type: reference
     ref_object: användare
-    description: OSH som skapade uppdraget.
+    description: Beställaren (vanligtvis OSH) som skapade uppdraget.
     required: true
 
   - id: uppdrag.attr.skapad_datum
@@ -140,12 +146,13 @@ states:
 transitions:
   - id: uppdrag.action.skapa
     label: Skapa
-    from: []           # Ingen befintlig status — skapar nytt objekt
+    from: []
     to: uppdrag.status.beställt
     roles:
       - OSH
+      - Beställare
     status_change: true
-    description: OSH skapar ett nytt uppdrag. Startar livscykeln.
+    description: Beställaren (vanligtvis OSH) skapar ett nytt uppdrag. Startar livscykeln.
 
   - id: uppdrag.action.ta_emot
     label: Ta emot
@@ -209,6 +216,7 @@ transitions:
     to: uppdrag.status.avslutat
     roles:
       - OSH
+      - Beställare
     status_change: true
 
   - id: uppdrag.action.beställa_tillägg
@@ -218,8 +226,9 @@ transitions:
     to: uppdrag.status.pågår
     roles:
       - OSH
+      - Beställare
     status_change: true
-    description: OSH beställer ett tillägg, vilket återaktiverar uppdraget till Pågår.
+    description: Beställaren (vanligtvis OSH) beställer ett tillägg, vilket återaktiverar uppdraget till Pågår.
 
   - id: uppdrag.action.uppdatera_beställning
     label: Uppdatera beställning
@@ -230,11 +239,12 @@ transitions:
       - uppdrag.status.pågår
       - uppdrag.status.vilande
       - uppdrag.status.levererat
-    to: ~              # Samma status — ingen förändring
+    to: ~
     roles:
       - OSH
+      - Beställare
     status_change: false
-    description: OSH kan uppdatera beställningsdetaljer i de flesta statusar.
+    description: Beställaren (vanligtvis OSH) kan uppdatera beställningsdetaljer i de flesta statusar.
 
 # ------------------------------------------------------------
 # Statusoberoende actions
@@ -282,7 +292,7 @@ relations:
     target_object: användare
     cardinality: many_to_one
     via_attribute: uppdrag.attr.skapad_av
-    description: OSH-användaren som skapade uppdraget.
+    description: Beställaren (vanligtvis OSH) som skapade uppdraget.
 
   - id: uppdrag.rel.tilldelad_användare
     label: Tilldelad användare
@@ -323,3 +333,5 @@ roles:
     label: Utförare
   - id: alla
     label: Alla roller
+  - id: Beställare
+    label: Beställare

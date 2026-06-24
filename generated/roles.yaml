@@ -41,3 +41,11 @@ roles:
     description: Actions tillgängliga för samtliga roller oavsett tilldelning.
     appears_in:
       - uppdrag
+
+  - id: Beställare
+    label: Beställare
+    description: >
+      Konceptuell roll för den som beställer och följer upp uppdrag.
+      Vanligtvis OSH, men kan i vissa fall vara andra roller.
+    appears_in:
+      - uppdrag
