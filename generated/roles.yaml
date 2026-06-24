@@ -1,0 +1,30 @@
+# ============================================================
+# GENERERAD FIL — redigera ALDRIG manuellt
+# Genereras av Claude från domains/*.yaml
+# Senast genererad: 2026-06-24
+# ============================================================
+
+roles:
+  - id: OSH
+    label: Områdesskyddshandläggare
+    description: Skapar och beställer uppdrag, godkänner leveranser och avslutar uppdrag.
+    appears_in:
+      - uppdrag
+
+  - id: Fördelare
+    label: Fördelare
+    description: Tar emot, avvisar och fördelar uppdrag till utförare.
+    appears_in:
+      - uppdrag
+
+  - id: Utförare
+    label: Utförare
+    description: Påbörjar, vilar och levererar uppdrag.
+    appears_in:
+      - uppdrag
+
+  - id: alla
+    label: Alla roller
+    description: Actions tillgängliga för samtliga roller oavsett tilldelning.
+    appears_in:
+      - uppdrag

@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/huring/DINO---ORCA/schema/domain-object.schema.json",
+  "title": "ORCA Domain Object",
+  "description": "Schema för ORCA-domänobjektfiler i DINO-modellen.",
+  "type": "object",
+  "required": ["object", "label", "version", "changelog", "attributes", "states", "transitions", "status_independent_actions", "roles"],
+  "additionalProperties": false,
+  "properties": {
+    "object": {
+      "type": "string",
+      "description": "Maskinläsbart namn på domänobjektet, t.ex. 'uppdrag'."
+    },
+    "label": {
+      "type": "string",
+      "description": "Läsbart namn på domänobjektet."
+    },
+    "description": {
+      "type": "string",
+      "description": "Beskrivning av domänobjektets syfte och roll."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantisk version, t.ex. '1.0.0'. Uppdateras av Claude vid varje förändring."
+    },
+    "changelog": {
+      "type": "array",
+      "description": "Förändringshistorik. Uppdateras av Claude, aldrig manuellt.",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "string" },
+          "date": { "type": "string", "format": "date" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "attributes": {
+      "type": "array",
+      "description": "Lista av attribut på domänobjektet. Addera nya — ändra aldrig befintliga id:n.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "type", "required"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["string", "enum", "boolean", "integer", "datetime", "date", "reference", "list", "object"]
+          },
+          "ref_object": { "type": "string" },
+          "description": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "states": {
+      "type": "array",
+      "description": "Lista av möjliga statusar. Addera nya — ändra aldrig befintliga id:n.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "terminal"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "terminal": { "type": "boolean" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "description": "State machine-transitions. from är alltid en lista.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "from", "roles", "status_change"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "from": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "to": {
+            "oneOf": [
+              { "type": "string" },
+              { "type": "null" }
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status_change": { "type": "boolean" },
+          "description": { "type": "string" },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["attribute", "value", "description"],
+              "additionalProperties": false,
+              "properties": {
+                "attribute": { "type": "string" },
+                "value": {},
+                "description": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "status_independent_actions": {
+      "type": "array",
+      "description": "Actions tillgängliga oavsett status. Aldrig statusändring.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "roles", "status_change"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "roles": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "status_change": { "type": "boolean", "enum": [false] },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "roles": {
+      "type": "array",
+      "description": "Roller som förekommer i detta domänobjekt.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" }
+        }
+      }
+    }
+  }
+}

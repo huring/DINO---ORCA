@@ -1,0 +1,66 @@
+name: Validera ORCA-domänfiler
+
+on:
+  push:
+    paths:
+      - 'domains/**/*.yaml'
+      - 'schema/domain-object.schema.json'
+  pull_request:
+    paths:
+      - 'domains/**/*.yaml'
+      - 'schema/domain-object.schema.json'
+
+jobs:
+  validate:
+    name: Validera YAML mot JSON Schema
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checka ut kod
+        uses: actions/checkout@v4
+
+      - name: Installera Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Installera beroenden
+        run: pip install jsonschema pyyaml
+
+      - name: Validera alla domänfiler
+        run: |
+          python3 - <<'EOF'
+          import json
+          import yaml
+          import sys
+          from pathlib import Path
+          from jsonschema import validate, ValidationError
+
+          schema_path = Path("schema/domain-object.schema.json")
+          domains_path = Path("domains")
+
+          with open(schema_path) as f:
+              schema = json.load(f)
+
+          files = list(domains_path.glob("*.yaml"))
+          if not files:
+              print("Inga domänfiler hittades under domains/")
+              sys.exit(1)
+
+          errors = []
+          for yaml_file in sorted(files):
+              with open(yaml_file) as f:
+                  data = yaml.safe_load(f)
+              try:
+                  validate(instance=data, schema=schema)
+                  print(f"✅ {yaml_file.name}")
+              except ValidationError as e:
+                  print(f"❌ {yaml_file.name}: {e.message}")
+                  errors.append(yaml_file.name)
+
+          if errors:
+              print(f"\n{len(errors)} fil(er) misslyckades validering: {', '.join(errors)}")
+              sys.exit(1)
+          else:
+              print(f"\nAlla {len(files)} domänfil(er) validerades utan fel.")
+          EOF

@@ -1,0 +1,254 @@
+# ============================================================
+# ORCA-modell: Uppdrag
+# ============================================================
+# Källa: Git-repo (denna fil)
+# Skrivare: Claude (aldrig manuellt redigerad)
+# Version: 1.0.0
+# Senast uppdaterad: 2026-06-24
+# ============================================================
+
+object: uppdrag
+label: Uppdrag
+description: >
+  Ett uppdrag representerar en beställning av ett arbete inom DINO.
+  Det skapas av OSH och följer en livscykel från beställning till avslut.
+
+version: "1.0.0"
+changelog:
+  - version: "1.0.0"
+    date: "2026-06-24"
+    description: Initialt schema genererat från CSV-export och Miro ORCA-diagram.
+
+# ------------------------------------------------------------
+# Attribut
+# Stabila id:n — lägg till nya, ändra aldrig befintliga id:n.
+# ------------------------------------------------------------
+attributes:
+  - id: uppdrag.attr.id
+    label: ID
+    type: string
+    description: Unikt identifierare för uppdraget.
+    required: true
+
+  - id: uppdrag.attr.status
+    label: Status
+    type: enum
+    description: Uppdragets aktuella status. Styrs av state machine nedan.
+    required: true
+
+  - id: uppdrag.attr.skapad_av
+    label: Skapad av
+    type: reference
+    ref_object: användare
+    description: OSH som skapade uppdraget.
+    required: true
+
+  - id: uppdrag.attr.skapad_datum
+    label: Skapad datum
+    type: datetime
+    description: Tidpunkt då uppdraget skapades.
+    required: true
+
+  - id: uppdrag.attr.tilldelad
+    label: Tilldelad utförare
+    type: reference
+    ref_object: användare
+    description: Utförare som uppdraget är tilldelat.
+    required: false
+
+  - id: uppdrag.attr.anteckningar
+    label: Anteckningar
+    type: list
+    description: Lista av anteckningar kopplade till uppdraget.
+    required: false
+
+  - id: uppdrag.attr.dokument
+    label: Dokument
+    type: list
+    description: Lista av dokument kopplade till uppdraget.
+    required: false
+
+# ------------------------------------------------------------
+# Statusar
+# Terminala statusar markeras med terminal: true.
+# ------------------------------------------------------------
+states:
+  - id: uppdrag.status.beställt
+    label: Beställt
+    terminal: false
+
+  - id: uppdrag.status.avvisat
+    label: Avvisat
+    terminal: true
+    description: Uppdraget har avvisats av Fördelare. Inga vidare actions möjliga.
+
+  - id: uppdrag.status.mottaget
+    label: Mottaget
+    terminal: false
+
+  - id: uppdrag.status.tilldelat
+    label: Tilldelat
+    terminal: false
+
+  - id: uppdrag.status.pågår
+    label: Pågår
+    terminal: false
+
+  - id: uppdrag.status.vilande
+    label: Vilande
+    terminal: false
+
+  - id: uppdrag.status.levererat
+    label: Levererat
+    terminal: false
+
+  - id: uppdrag.status.avslutat
+    label: Avslutat
+    terminal: true
+    description: Uppdraget är avslutat. Inga vidare actions möjliga.
+
+# ------------------------------------------------------------
+# Transitions
+# from: alltid en lista (även om bara ett värde).
+# roles: roller som får utföra actionen.
+# status_change: false för actions utan statusändring.
+# ------------------------------------------------------------
+transitions:
+  - id: uppdrag.action.skapa
+    label: Skapa
+    from: []           # Ingen befintlig status — skapar nytt objekt
+    to: uppdrag.status.beställt
+    roles:
+      - OSH
+    status_change: true
+    description: OSH skapar ett nytt uppdrag. Startar livscykeln.
+
+  - id: uppdrag.action.ta_emot
+    label: Ta emot
+    from:
+      - uppdrag.status.beställt
+    to: uppdrag.status.mottaget
+    roles:
+      - Fördelare
+    status_change: true
+
+  - id: uppdrag.action.avvisa
+    label: Avvisa
+    from:
+      - uppdrag.status.beställt
+    to: uppdrag.status.avvisat
+    roles:
+      - Fördelare
+    status_change: true
+
+  - id: uppdrag.action.fördela
+    label: Fördela
+    from:
+      - uppdrag.status.mottaget
+    to: uppdrag.status.tilldelat
+    roles:
+      - Fördelare
+    status_change: true
+
+  - id: uppdrag.action.påbörja
+    label: Påbörja
+    from:
+      - uppdrag.status.tilldelat
+      - uppdrag.status.vilande
+    to: uppdrag.status.pågår
+    roles:
+      - Utförare
+    status_change: true
+
+  - id: uppdrag.action.vila
+    label: Vila
+    from:
+      - uppdrag.status.pågår
+    to: uppdrag.status.vilande
+    roles:
+      - Utförare
+    status_change: true
+
+  - id: uppdrag.action.leverera
+    label: Leverera
+    from:
+      - uppdrag.status.pågår
+    to: uppdrag.status.levererat
+    roles:
+      - Utförare
+    status_change: true
+
+  - id: uppdrag.action.avsluta
+    label: Avsluta
+    from:
+      - uppdrag.status.levererat
+    to: uppdrag.status.avslutat
+    roles:
+      - OSH
+    status_change: true
+
+  - id: uppdrag.action.beställa_tillägg
+    label: Beställa tillägg
+    from:
+      - uppdrag.status.levererat
+    to: uppdrag.status.pågår
+    roles:
+      - OSH
+    status_change: true
+    description: OSH beställer ett tillägg, vilket återaktiverar uppdraget till Pågår.
+
+  - id: uppdrag.action.uppdatera_beställning
+    label: Uppdatera beställning
+    from:
+      - uppdrag.status.beställt
+      - uppdrag.status.mottaget
+      - uppdrag.status.tilldelat
+      - uppdrag.status.pågår
+      - uppdrag.status.vilande
+      - uppdrag.status.levererat
+    to: ~              # Samma status — ingen förändring
+    roles:
+      - OSH
+    status_change: false
+    description: OSH kan uppdatera beställningsdetaljer i de flesta statusar.
+
+# ------------------------------------------------------------
+# Statusoberoende actions
+# Tillgängliga oavsett status. Ingen statusändring.
+# ------------------------------------------------------------
+status_independent_actions:
+  - id: uppdrag.action.hämta_underlag
+    label: Hämta underlag
+    roles:
+      - Utförare
+      - Fördelare
+    status_change: false
+    description: Hämtar underlagsmaterial kopplat till uppdraget.
+
+  - id: uppdrag.action.skapa_anteckning
+    label: Skapa anteckning
+    roles:
+      - alla
+    status_change: false
+    description: Alla roller kan skapa anteckningar på uppdraget oavsett status.
+
+  - id: uppdrag.action.koppla_dokument
+    label: Koppla dokument
+    roles:
+      - alla
+    status_change: false
+    description: Alla roller kan koppla dokument till uppdraget oavsett status.
+
+# ------------------------------------------------------------
+# Roller som förekommer i detta domänobjekt
+# Fullständig definition genereras i generated/roles.yaml
+# ------------------------------------------------------------
+roles:
+  - id: OSH
+    label: Områdesskyddshandläggare
+  - id: Fördelare
+    label: Fördelare
+  - id: Utförare
+    label: Utförare
+  - id: alla
+    label: Alla roller
