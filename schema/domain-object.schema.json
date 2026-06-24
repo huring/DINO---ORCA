@@ -156,7 +156,12 @@
         "additionalProperties": false,
         "properties": {
           "id": { "type": "string" },
-          "label": { "type": "string" }
+          "label": { "type": "string" },
+          "aliases": {
+            "type": "array",
+            "description": "Alternativa benämningar för rollen i specifika kontexter.",
+            "items": { "type": "string" }
+          }
         }
       }
     },

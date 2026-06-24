@@ -7,6 +7,7 @@
 roles:
   - id: OSH
     label: Områdesskyddshandläggare
+    aliases: [Beställare]
     description: Skapar och beställer uppdrag, godkänner leveranser och avslutar uppdrag. Skapar och avför delområden.
     appears_in:
       - uppdrag
@@ -42,10 +43,3 @@ roles:
     appears_in:
       - uppdrag
 
-  - id: Beställare
-    label: Beställare
-    description: >
-      Konceptuell roll för den som beställer och följer upp uppdrag.
-      Vanligtvis OSH, men kan i vissa fall vara andra roller.
-    appears_in:
-      - uppdrag

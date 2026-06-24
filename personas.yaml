@@ -51,10 +51,6 @@ roles:
     label: Alla roller
     personas:
 
-  - id: Beställare
-    label: Beställare
-    personas:
-
 # ------------------------------------------------------------
 # Fristående personas — fri struktur, redigeras av teamet
 # ------------------------------------------------------------

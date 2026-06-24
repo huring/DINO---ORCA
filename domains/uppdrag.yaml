@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.1.0
+# Version: 1.2.0
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -13,7 +13,7 @@ description: >
   Ett uppdrag representerar en beställning av ett arbete inom DINO.
   Det skapas av en beställare (vanligtvis OSH) och följer en livscykel från beställning till avslut.
 
-version: "1.1.0"
+version: "1.2.0"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
@@ -34,6 +34,12 @@ changelog:
       Lagt till roll Beställare som konceptuell abstraktion för den som
       beställer uppdrag (vanligtvis OSH). Rollen adderad till skapa,
       avsluta, beställa_tillägg och uppdatera_beställning.
+  - version: "1.2.0"
+    date: "2026-06-24"
+    description: >
+      Ersätter Beställare som separat roll med alias-mönster. OSH får
+      aliases: [Beställare]. Beställare tas bort som fristående roll.
+      Transitions återgår till enbart OSH.
 
 # ------------------------------------------------------------
 # Attribut
@@ -150,9 +156,8 @@ transitions:
     to: uppdrag.status.beställt
     roles:
       - OSH
-      - Beställare
     status_change: true
-    description: Beställaren (vanligtvis OSH) skapar ett nytt uppdrag. Startar livscykeln.
+    description: OSH (aka Beställare) skapar ett nytt uppdrag. Startar livscykeln.
 
   - id: uppdrag.action.ta_emot
     label: Ta emot
@@ -216,7 +221,6 @@ transitions:
     to: uppdrag.status.avslutat
     roles:
       - OSH
-      - Beställare
     status_change: true
 
   - id: uppdrag.action.beställa_tillägg
@@ -226,9 +230,8 @@ transitions:
     to: uppdrag.status.pågår
     roles:
       - OSH
-      - Beställare
     status_change: true
-    description: Beställaren (vanligtvis OSH) beställer ett tillägg, vilket återaktiverar uppdraget till Pågår.
+    description: OSH (aka Beställare) beställer ett tillägg, vilket återaktiverar uppdraget till Pågår.
 
   - id: uppdrag.action.uppdatera_beställning
     label: Uppdatera beställning
@@ -242,9 +245,8 @@ transitions:
     to: ~
     roles:
       - OSH
-      - Beställare
     status_change: false
-    description: Beställaren (vanligtvis OSH) kan uppdatera beställningsdetaljer i de flesta statusar.
+    description: OSH (aka Beställare) kan uppdatera beställningsdetaljer i de flesta statusar.
 
 # ------------------------------------------------------------
 # Statusoberoende actions
@@ -327,11 +329,10 @@ relations:
 roles:
   - id: OSH
     label: Områdesskyddshandläggare
+    aliases: [Beställare]
   - id: Fördelare
     label: Fördelare
   - id: Utförare
     label: Utförare
   - id: alla
     label: Alla roller
-  - id: Beställare
-    label: Beställare
