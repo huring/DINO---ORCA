@@ -6,6 +6,8 @@
 
 # ------------------------------------------------------------
 # Alla relationer (platt lista med from_object tillagt)
+# Objekt märkta med [ej modellerat] existerar i systemet men
+# saknar ännu en egen domains/-fil.
 # ------------------------------------------------------------
 relations:
   - id: uppdrag.rel.tillhör_delområde
@@ -19,7 +21,7 @@ relations:
   - id: uppdrag.rel.skapad_av_användare
     from_object: uppdrag
     label: Skapad av användare
-    target_object: användare
+    target_object: användare             # [ej modellerat]
     cardinality: many_to_one
     via_attribute: uppdrag.attr.skapad_av
     description: OSH-användaren som skapade uppdraget.
@@ -27,10 +29,32 @@ relations:
   - id: uppdrag.rel.tilldelad_användare
     from_object: uppdrag
     label: Tilldelad användare
-    target_object: användare
+    target_object: användare             # [ej modellerat]
     cardinality: many_to_one
     via_attribute: uppdrag.attr.tilldelad
     description: Utföraren som uppdraget är tilldelat.
+
+  - id: uppdrag.rel.har_värderingar
+    from_object: uppdrag
+    label: Har värderingar
+    target_object: värdering             # [ej modellerat]
+    cardinality: one_to_many
+    description: Ett uppdrag kan ha noll eller flera värderingar kopplade till sig.
+
+  - id: uppdrag.rel.har_kontaktperson
+    from_object: uppdrag
+    label: Har kontaktperson
+    target_object: kontaktperson         # [ej modellerat]
+    cardinality: many_to_one
+    description: Ett uppdrag kan ha en kontaktperson.
+
+  - id: uppdrag.rel.har_ersättningsbelopp
+    from_object: uppdrag
+    label: Har ersättningsbelopp
+    target_object: ersättningsbelopp     # [ej modellerat]
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.ersättningsbelopp
+    description: Ett uppdrag kan ha ett ersättningsbelopp kopplat till sig.
 
   - id: delområde.rel.har_uppdrag
     from_object: delområde
@@ -43,7 +67,7 @@ relations:
   - id: delområde.rel.ingår_i_fördelningsplan
     from_object: delområde
     label: Ingår i fördelningsplan
-    target_object: fördelningsplan
+    target_object: fördelningsplan       # [ej modellerat]
     cardinality: many_to_one
     via_attribute: delområde.attr.fördelningsplan
     description: Delområdet är kopplat till ett FP.
@@ -51,7 +75,7 @@ relations:
   - id: delområde.rel.har_avtal
     from_object: delområde
     label: Har avtal
-    target_object: avtal
+    target_object: avtal                 # [ej modellerat]
     cardinality: one_to_one
     via_attribute: delområde.attr.avtal
     description: Avtal som registrerats på delområdet.
@@ -59,10 +83,31 @@ relations:
   - id: delområde.rel.skapad_av_användare
     from_object: delområde
     label: Skapad av användare
-    target_object: användare
+    target_object: användare             # [ej modellerat]
     cardinality: many_to_one
     via_attribute: delområde.attr.skapad_av
     description: OSH-användaren som skapade delområdet.
+
+  - id: delområde.rel.tillhör_sko
+    from_object: delområde
+    label: Tillhör SKO
+    target_object: sko                   # [ej modellerat]
+    cardinality: many_to_one
+    description: Delområdet tillhör ett skyddsområde (SKO).
+
+  - id: delområde.rel.har_förslag
+    from_object: delområde
+    label: Har förslag
+    target_object: förslag               # [ej modellerat]
+    cardinality: many_to_one
+    description: Delområdet kan vara kopplat till ett förslag.
+
+  - id: delområde.rel.har_kontaktperson
+    from_object: delområde
+    label: Har kontaktpersoner
+    target_object: kontaktperson         # [ej modellerat]
+    cardinality: one_to_many
+    description: Ett delområde kan ha noll eller flera kontaktpersoner.
 
 # ------------------------------------------------------------
 # Relationsgraf (adjacency list per objekt)
@@ -78,6 +123,15 @@ graph:
     - target: användare
       cardinality: many_to_one
       relation_id: uppdrag.rel.tilldelad_användare
+    - target: värdering
+      cardinality: one_to_many
+      relation_id: uppdrag.rel.har_värderingar
+    - target: kontaktperson
+      cardinality: many_to_one
+      relation_id: uppdrag.rel.har_kontaktperson
+    - target: ersättningsbelopp
+      cardinality: many_to_one
+      relation_id: uppdrag.rel.har_ersättningsbelopp
 
   delområde:
     - target: uppdrag
@@ -92,3 +146,12 @@ graph:
     - target: användare
       cardinality: many_to_one
       relation_id: delområde.rel.skapad_av_användare
+    - target: sko
+      cardinality: many_to_one
+      relation_id: delområde.rel.tillhör_sko
+    - target: förslag
+      cardinality: many_to_one
+      relation_id: delområde.rel.har_förslag
+    - target: kontaktperson
+      cardinality: one_to_many
+      relation_id: delområde.rel.har_kontaktperson

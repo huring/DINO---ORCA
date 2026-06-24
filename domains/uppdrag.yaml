@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.0.1
+# Version: 1.0.2
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -13,7 +13,7 @@ description: >
   Ett uppdrag representerar en beställning av ett arbete inom DINO.
   Det skapas av OSH och följer en livscykel från beställning till avslut.
 
-version: "1.0.1"
+version: "1.0.2"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
@@ -23,6 +23,11 @@ changelog:
     description: >
       Lagt till attribut delområde (referens till ursprungligt delområde).
       Lagt till relations-sektion med relationer till delområde och användare.
+  - version: "1.0.2"
+    date: "2026-06-24"
+    description: >
+      Kompletterat relations-sektion med har_värderingar, har_kontaktperson
+      och har_ersättningsbelopp, identifierade från systemets relationsmatris.
 
 # ------------------------------------------------------------
 # Attribut
@@ -66,6 +71,13 @@ attributes:
     type: reference
     ref_object: användare
     description: Utförare som uppdraget är tilldelat.
+    required: false
+
+  - id: uppdrag.attr.ersättningsbelopp
+    label: Ersättningsbelopp
+    type: reference
+    ref_object: ersättningsbelopp
+    description: Ersättningsbelopp kopplat till uppdraget.
     required: false
 
   - id: uppdrag.attr.anteckningar
@@ -278,6 +290,25 @@ relations:
     cardinality: many_to_one
     via_attribute: uppdrag.attr.tilldelad
     description: Utföraren som uppdraget är tilldelat.
+
+  - id: uppdrag.rel.har_värderingar
+    label: Har värderingar
+    target_object: värdering
+    cardinality: one_to_many
+    description: Ett uppdrag kan ha noll eller flera värderingar kopplade till sig.
+
+  - id: uppdrag.rel.har_kontaktperson
+    label: Har kontaktperson
+    target_object: kontaktperson
+    cardinality: many_to_one
+    description: Ett uppdrag kan ha en kontaktperson.
+
+  - id: uppdrag.rel.har_ersättningsbelopp
+    label: Har ersättningsbelopp
+    target_object: ersättningsbelopp
+    cardinality: many_to_one
+    via_attribute: uppdrag.attr.ersättningsbelopp
+    description: Ett uppdrag kan ha ett ersättningsbelopp kopplat till sig.
 
 # ------------------------------------------------------------
 # Roller som förekommer i detta domänobjekt

@@ -3,7 +3,7 @@
 # ============================================================
 # Källa: Git-repo (denna fil)
 # Skrivare: Claude (aldrig manuellt redigerad)
-# Version: 1.0.1
+# Version: 1.0.2
 # Senast uppdaterad: 2026-06-24
 # ============================================================
 
@@ -14,7 +14,7 @@ description: >
   inom DINO. Det kopplas till ett fördelningsplan (FP) och följer en
   livscykel från planering till avtalat avslut.
 
-version: "1.0.1"
+version: "1.0.2"
 changelog:
   - version: "1.0.0"
     date: "2026-06-24"
@@ -22,6 +22,11 @@ changelog:
   - version: "1.0.1"
     date: "2026-06-24"
     description: Lagt till relations-sektion med relationer till uppdrag, fördelningsplan, avtal och användare.
+  - version: "1.0.2"
+    date: "2026-06-24"
+    description: >
+      Kompletterat relations-sektion med tillhör_sko, har_förslag och
+      har_kontaktperson, identifierade från systemets relationsmatris.
 
 # ------------------------------------------------------------
 # Attribut
@@ -258,6 +263,24 @@ relations:
     cardinality: many_to_one
     via_attribute: delområde.attr.skapad_av
     description: OSH-användaren som skapade delområdet.
+
+  - id: delområde.rel.tillhör_sko
+    label: Tillhör SKO
+    target_object: sko
+    cardinality: many_to_one
+    description: Delområdet tillhör ett skyddsområde (SKO).
+
+  - id: delområde.rel.har_förslag
+    label: Har förslag
+    target_object: förslag
+    cardinality: many_to_one
+    description: Delområdet kan vara kopplat till ett förslag.
+
+  - id: delområde.rel.har_kontaktperson
+    label: Har kontaktpersoner
+    target_object: kontaktperson
+    cardinality: one_to_many
+    description: Ett delområde kan ha noll eller flera kontaktpersoner.
 
 # ------------------------------------------------------------
 # Roller som förekommer i detta domänobjekt
